@@ -64,6 +64,28 @@ class CourseViewSet(viewsets.ModelViewSet):
             subject='New Course Created',
             message=f'A new course "{course.title}" has been created.'
         )
+        
+    def perform_update(self, serializer):
+        """
+        Updates an existing course and sends a notification email.
+        """
+        course = serializer.save()
+        send_email_notification(
+            subject='Course Updated',
+            message=f'The course "{course.title}" has been updated.'
+        )
+
+    def perform_destroy(self, instance):
+        """
+        Deletes a course and sends a notification email.
+        """
+        course_title = instance.title  
+        instance.delete()
+        send_email_notification(
+            subject='Course Deleted',
+            message=f'The course "{course_title}" has been deleted.'
+        )
+
 
 
 class LessonViewSet(viewsets.ModelViewSet):
@@ -91,14 +113,33 @@ class LessonViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """
         Creates a new lesson and sends a notification email.
-
-        Args:
-            serializer (LessonSerializer): The serializer used to create the lesson.
         """
         lesson = serializer.save()
         send_email_notification(
             subject='New Lesson Created',
             message=f'A new lesson "{lesson.title}" has been added to the course "{lesson.course.title}".'
+        )
+
+    def perform_update(self, serializer):
+        """
+        Updates an existing lesson and sends a notification email.
+        """
+        lesson = serializer.save()
+        send_email_notification(
+            subject='Lesson Updated',
+            message=f'The lesson "{lesson.title}" has been updated in the course "{lesson.course.title}".'
+        )
+
+    def perform_destroy(self, instance):
+        """
+        Deletes a lesson and sends a notification email.
+        """
+        lesson_title = instance.title   
+        course_title = instance.course.title
+        instance.delete()
+        send_email_notification(
+            subject='Lesson Deleted',
+            message=f'The lesson "{lesson_title}" from the course "{course_title}" has been deleted.'
         )
 
 
