@@ -185,10 +185,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 def register_user(request):
     """
     Registers a new user. Takes username, password, and email as input.
-
     Args:
         request (Request): The request object containing user data (username, password, email).
-
     Returns:
         Response: Response with a token for the user if registration is successful, or an error message.
     """
@@ -200,7 +198,7 @@ def register_user(request):
         return Response({'error': 'Username already exists'}, status=400)
 
     user = User.objects.create_user(username=username, password=password, email=email)
-    token, _ = Token.objects.get_or_create(user=user)
+    token_object = Token.objects.get_or_create(user=user)[0]
     return Response({'token': token.key, 'message': 'User registered successfully'})
 
 
@@ -219,8 +217,9 @@ def login_user(request):
     password = request.data.get('password')
     user = authenticate(username=username, password=password)
     if user:
-        token, _ = Token.objects.get_or_create(user=user)
+        token_object = Token.objects.get_or_create(user=user)[0]
+
         return Response({'token': token.key, 'message': 'Login successful'})
-    return Response({'error': 'Invalid credentials'}, status=400)
+    return Response(status=400)
 
 
