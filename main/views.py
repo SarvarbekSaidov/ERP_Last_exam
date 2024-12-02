@@ -1,6 +1,6 @@
 from django.core.mail import send_mail
 from django.conf import settings
-from rest_framework import viewsets
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import IsAuthenticated 
 from .models import Course, Lesson, Comment
 from .serializers import CourseSerializer, LessonSerializer, CommentSerializer
@@ -10,12 +10,11 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.throttling import ScopedRateThrottle
 # create your views here
 
 
-class BaseViewSet(viewsets.ModelViewSet):
+class BaseViewSet(ModelViewSet):
     """
     Base class for ViewSets for CRUD
     """
