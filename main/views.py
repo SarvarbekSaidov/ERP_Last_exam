@@ -1,7 +1,7 @@
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated 
 from .models import Course, Lesson, Comment
 from .serializers import CourseSerializer, LessonSerializer, CommentSerializer
 from rest_framework.decorators import api_view
@@ -10,7 +10,10 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.throttling import ScopedRateThrottle
 # create your views here
+
 
 class BaseViewSet(viewsets.ModelViewSet):
     """
@@ -41,6 +44,8 @@ class CourseViewSet(BaseViewSet):
     search_fields = ['title', 'description']
     ordering_fields = ['title', 'created_at', 'instructor', 'updated_at']
     ordering = ['title']
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'courses'
 
     def perform_create(self, serializer):
         """
@@ -63,6 +68,8 @@ class LessonViewSet(BaseViewSet):
     search_fields = ['title', 'description']
     ordering_fields = ['title']
     ordering = ['title']
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'lessons'
 
     def perform_create(self, serializer):
         """
@@ -85,6 +92,8 @@ class CommentViewSet(BaseViewSet):
     search_fields = ['content']
     ordering_fields = ['created_at']
     ordering = ['created_at']
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = 'comments'
 
     def perform_create(self, serializer):
         """
@@ -112,3 +121,4 @@ def register_user(request):
     user = User.objects.create_user(username=username, password=password, email=email)
     token = Token.objects.create(user=user)
     return Response({'token': token.key, 'message': 'User registered successfully'})
+
