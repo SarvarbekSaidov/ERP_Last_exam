@@ -14,15 +14,14 @@ from rest_framework import filters
 
 class BaseViewSet(viewsets.ModelViewSet):
     """
-    Base class for ViewSets with common behavior for sending email notifications
-    when creating, updating, or deleting an object.
+    Base class for ViewSets for CRUD
     """
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
 
     def send_email(self, subject, message):
         """
-        Helper function to send an email notification.
+        Base function for sending emails.
         """
         send_mail(
             subject=subject,
@@ -56,7 +55,7 @@ class CourseViewSet(BaseViewSet):
 
 class LessonViewSet(BaseViewSet):
     """
-    Manage lessons: list, create, update, delete.
+    lessons: list, create, update, delete.
     """
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
@@ -78,7 +77,7 @@ class LessonViewSet(BaseViewSet):
 
 class CommentViewSet(BaseViewSet):
     """
-    Manage comments: list, create, update, delete.
+    comments: list, create, update, delete.
     """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
