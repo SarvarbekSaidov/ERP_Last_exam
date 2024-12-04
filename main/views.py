@@ -29,9 +29,9 @@ class BaseViewSet(ModelViewSet):
             subject=subject,
             message=message,
             from_email=settings.EMAIL_HOST_USER,
-            recipient_list=['saidovsarvarbek@hotmail.com'],   
+            recipient_list=['saidovsarvarbek02@gmail.com'],   
         )
-
+        print(f'Email sent: {subject}')
 
 class CourseViewSet(BaseViewSet):
     """

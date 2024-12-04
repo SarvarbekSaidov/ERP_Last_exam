@@ -71,7 +71,6 @@ REST_FRAMEWORK = {
         'lessons': '10/minute',
         'comments': '10/minute',    
     }
-
 }
 
 
@@ -166,5 +165,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'madrahimovq@gmail.com'
-EMAIL_HOST_PASSWORD = 'oaeq diba tefi ljji'
+EMAIL_HOST_USER = 'saidovsarvarbek01@gmail.com'
+EMAIL_HOST_PASSWORD = 'gxhc htty xjnm wbkp'
+
+
+ 
+
