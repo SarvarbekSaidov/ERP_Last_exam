@@ -1,17 +1,17 @@
-from django.core.mail import send_mail
-from django.conf import settings
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAuthenticated 
-from .models import Course, Lesson, Comment
-from .serializers import CourseSerializer, LessonSerializer, CommentSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
+from rest_framework.throttling import ScopedRateThrottle
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.throttling import ScopedRateThrottle
-# create your views here
+from django.contrib.auth.models import User
+from rest_framework.authtoken.models import Token
+from django.core.mail import send_mail
+from django.conf import settings
+from .models import Course, Lesson, Comment
+from .serializers import CourseSerializer, LessonSerializer, CommentSerializer
+from .permissions import  IsAuthorOrAdminOrReadOnly
 
 
 class BaseViewSet(ModelViewSet):
@@ -33,12 +33,14 @@ class BaseViewSet(ModelViewSet):
         )
         print(f'Email sent: {subject}')
 
+
 class CourseViewSet(BaseViewSet):
     """
     Manage courses: list, create, update, delete.
     """
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    permission_classes = [IsAuthorOrAdminOrReadOnly]   
     filterset_fields = ['category', 'title']
     search_fields = ['title', 'description']
     ordering_fields = ['title', 'created_at', 'instructor', 'updated_at']
@@ -59,10 +61,11 @@ class CourseViewSet(BaseViewSet):
 
 class LessonViewSet(BaseViewSet):
     """
-    lessons: list, create, update, delete.
+    Manage lessons: list, create, update, delete.
     """
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthorOrAdminOrReadOnly]  
     filterset_fields = ['course', 'title']
     search_fields = ['title', 'description']
     ordering_fields = ['title']
@@ -83,10 +86,11 @@ class LessonViewSet(BaseViewSet):
 
 class CommentViewSet(BaseViewSet):
     """
-    comments: list, create, update, delete.
+    Manage comments: list, create, update, delete.
     """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    permission_classes = [IsAuthorOrAdminOrReadOnly]
     filterset_fields = ['lesson']
     search_fields = ['content']
     ordering_fields = ['created_at']
@@ -97,8 +101,9 @@ class CommentViewSet(BaseViewSet):
     def perform_create(self, serializer):
         """
         Creates a new comment and sends an email notification.
+        The user field is automatically set by the serializer.
         """
-        comment = serializer.save(user=self.request.user)
+        comment = serializer.save()   
         self.send_email(
             subject='New Comment Added',
             message=f'A new comment has been added to the lesson "{comment.lesson.title}".',
@@ -108,11 +113,12 @@ class CommentViewSet(BaseViewSet):
 @api_view(['POST'])
 def register_user(request):
     """
-    Register a new user and generate a token.
+    Register a new user
     """
     username = request.data.get('username')
     password = request.data.get('password')
     email = request.data.get('email')
+    
 
     if User.objects.filter(username=username).exists():
         return Response({'error': 'Username already exists'}, status=400)
@@ -120,4 +126,3 @@ def register_user(request):
     user = User.objects.create_user(username=username, password=password, email=email)
     token = Token.objects.create(user=user)
     return Response({'token': token.key, 'message': 'User registered successfully'})
-

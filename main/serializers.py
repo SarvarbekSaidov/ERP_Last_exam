@@ -14,6 +14,7 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Course
         fields = '__all__'
 
+
 class LessonSerializer(serializers.ModelSerializer):
     """
     Serializer for the Lesson model.
@@ -22,10 +23,12 @@ class LessonSerializer(serializers.ModelSerializer):
         model = Lesson
         fields = '__all__'
 
+
 class CommentSerializer(serializers.ModelSerializer):
-    """
-    Serializer for the Comment model.
-    """
     class Meta:
         model = Comment
-        fields = '__all__'
+        fields = ['id', 'lesson', 'content', 'created_at']  
+
+    def create(self, validated_data):
+        validated_data['author'] = self.context['request'].user
+        return super().create(validated_data)
