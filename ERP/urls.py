@@ -35,6 +35,10 @@ schema_view = get_schema_view(
     permission_classes=(AllowAny,),
 )
 
+"""
+Main project URL patterns
+"""
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('main.urls')),

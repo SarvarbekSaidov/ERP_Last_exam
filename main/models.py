@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Course(models.Model):
     """
-    course with a title, description, category, and instructor.
+    Course with a title, description, category, and instructor.
     """
     title = models.CharField(max_length=255)
     description = models.TextField()
@@ -19,7 +19,7 @@ class Course(models.Model):
 
 class Lesson(models.Model):
     """
-    lesson within a course.
+    Lesson within a course.
     """
     course = models.ForeignKey(Course, related_name='lessons', on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
@@ -36,10 +36,10 @@ LIKE_CHOICES = (
 
 class Comment(models.Model):
     """
-    user's comment on a lesson with a like/dislike option.
+    User's comment on a lesson with a like/dislike option.
     """
     lesson = models.ForeignKey(Lesson, related_name='comments', on_delete=models.CASCADE)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE) 
     content = models.TextField()
     liked = models.CharField(choices=LIKE_CHOICES, max_length=7, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

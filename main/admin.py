@@ -1,6 +1,9 @@
 from django.contrib import admin
 from .models import Course, Lesson, Comment
 
+"""
+Registering models for admin panel
+"""
 
 admin.site.register(Course)
 admin.site.register(Lesson)

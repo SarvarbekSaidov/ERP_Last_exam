@@ -1,6 +1,11 @@
 from rest_framework import serializers
 from .models import Course, Lesson, Comment
 
+"""
+Serializers to convert python models to JSON
+"""
+
+
 class CourseSerializer(serializers.ModelSerializer):
     """
     Serializer for the Course model.
